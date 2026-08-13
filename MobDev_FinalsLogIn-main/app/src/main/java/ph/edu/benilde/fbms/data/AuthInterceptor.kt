@@ -19,6 +19,11 @@ class AuthInterceptor(
         val newRequestBuilder = request.newBuilder()
 
         if (deviceSecret != null) {
+            if (deviceSecret == "fake_device_secret_for_testing") {
+                // If this is the test token, throw an exception to simulate offline mode
+                // so the repository falls back to the local demo survey.
+                throw java.io.IOException("Test mode offline simulation")
+            }
             newRequestBuilder.addHeader("Authorization", "Device $deviceSecret")
         }
 

@@ -5,14 +5,24 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
 import ph.edu.benilde.fbms.data.SecureDeviceStore
 import ph.edu.benilde.fbms.ui.SettingsScreen
 import ph.edu.benilde.fbms.ui.WelcomeScreen
@@ -31,7 +41,20 @@ class MainActivity : ComponentActivity() {
                     val context = LocalContext.current
                     val secureStore = remember { SecureDeviceStore(context) }
 
-                    androidx.compose.runtime.LaunchedEffect(Unit) {
+                    var lastInteractionTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
+                    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = currentBackStackEntry?.destination?.route
+
+                    LaunchedEffect(lastInteractionTime, currentRoute) {
+                        if (currentRoute != "welcome" && currentRoute != "activation") {
+                            delay(30_000L) // 30 seconds inactivity timeout
+                            navController.navigate("welcome") {
+                                popUpTo(0)
+                            }
+                        }
+                    }
+
+                    LaunchedEffect(Unit) {
                         ph.edu.benilde.fbms.data.RetrofitClient.onUnauthorizedListener = {
                             runOnUiThread {
                                 Toast.makeText(
@@ -48,8 +71,20 @@ class MainActivity : ComponentActivity() {
                     
                     val startDestination = if (secureStore.isActivated()) "welcome" else "activation"
 
-                    NavHost(navController = navController, startDestination = startDestination) {
-                        composable("activation") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .pointerInput(Unit) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        awaitPointerEvent()
+                                        lastInteractionTime = System.currentTimeMillis()
+                                    }
+                                }
+                            }
+                    ) {
+                        NavHost(navController = navController, startDestination = startDestination) {
+                            composable("activation") {
                             ActivationScreen(
                                 onActivated = { deviceName ->
                                     Toast.makeText(context, "Activated as: $deviceName", Toast.LENGTH_LONG).show()
@@ -90,6 +125,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+                    }
                     }
                 }
             }
