@@ -1,0 +1,16 @@
+# Gradle build outputs
+**/build/
+**/.gradle/
+
+# Android Studio / IntelliJ / VS Code
+.idea/
+.vscode/
+*.iml
+
+# Local configuration & secrets
+**/local.properties
+.DS_Store
+Thumbs.db
+
+# Archives & temporary files
+*.zip
