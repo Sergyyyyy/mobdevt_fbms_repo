@@ -13,3 +13,14 @@
 - Added test mode offline mock data simulation for safer development and QA testing without hitting production endpoints.
 - Merged the main repository branches to consolidate the core features of the FBMS Mobile App.
 
+### 📁 Modified Files
+- `app/src/main/java/ph/edu/benilde/fbms/MainActivity.kt`
+  *(Updated to handle inactivity and trigger the idle timeout logic)*
+- `app/src/main/java/ph/edu/benilde/fbms/ui/WelcomeScreen.kt`
+  *(Added filler/idle screen UI and timeout reset handlers)*
+- `app/src/main/java/ph/edu/benilde/fbms/data/repository/FeedbackRepository.kt`
+  *(Implemented test mode offline simulation and mocked feedback responses)*
+- `app/src/main/java/ph/edu/benilde/fbms/data/AuthInterceptor.kt`
+  *(Added recovery logic and token validation for 401 Unauthorized API responses)*
+- `gradle/wrapper/gradle-wrapper.properties`
+  *(Minor build configuration updates)*
