@@ -1,7 +1,7 @@
 # MOBDEVT_FINALS_REPO
 ## Recent Changes & Updates
 
-## Thee are the changes that have been made/
+## The are the changes that have been made/
 
 ###  Features & Enhancements
 - **Idle Screen Timeout Logic**: Implemented an automatic filler/idle screen that triggers after a period of inactivity to improve kiosk security and user experience.
